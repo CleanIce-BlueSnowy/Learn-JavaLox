@@ -10,4 +10,8 @@ class Token {
         this.literal = literal;
         this.line = line;
     }
+
+    public String toString() {
+        return String.format("%s %s %s", type, lexeme, literal);
+    }
 }
