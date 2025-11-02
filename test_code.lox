@@ -1,0 +1,7 @@
+var /* This is comment!
+Hello World!
+/* Nest Comment!
+Goodbye!
+*/
+Still comment!
+*/ number = 1;

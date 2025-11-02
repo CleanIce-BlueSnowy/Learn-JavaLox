@@ -110,6 +110,41 @@ class Scanner {
                     while (peek() != '\n' && !isAtEnd()) {
                         advance();
                     }
+                } else if (match('*')) {
+                    char next = peek();
+                    int nest_cnt = 1;
+                    WHILE:
+                    while (true) {
+                        switch (next) {
+                            case '\0' -> {
+                                Lox.error(line, "Unterminated comment.");
+                                return;
+                            }
+                            case '\n' -> {
+                                advance();
+                                line++;
+                            }
+                            case '*' -> {
+                                advance();
+                                if (match('/')) {
+                                    nest_cnt--;
+                                    if (nest_cnt == 0) {
+                                        break WHILE;
+                                    }
+                                }
+                            }
+                            case '/' -> {
+                                advance();
+                                if (match('*')) {
+                                    nest_cnt++;
+                                }
+                            }
+                            default -> {
+                                advance();
+                            }
+                        }
+                        next = peek();
+                    }
                 } else {
                     addToken(TokenType.SLASH);
                 }
