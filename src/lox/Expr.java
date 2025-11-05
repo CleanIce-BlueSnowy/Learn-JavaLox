@@ -3,6 +3,13 @@ package lox;
 import java.util.List;
 
 abstract class Expr {
+    interface Visitor<RetType> {
+        RetType visitBinaryExpr(Binary expr);
+        RetType visitGroupingExpr(Grouping expr);
+        RetType visitLiteralExpr(Literal expr);
+        RetType visitUnaryExpr(Unary expr);
+    }
+
     static class Binary extends Expr {
         final Expr left;
         final Token operator;
@@ -13,6 +20,11 @@ abstract class Expr {
             this.operator = operator;
             this.right = right;
         }
+
+        @Override
+        <RetType> RetType accept(Visitor<RetType> visitor) {
+            return visitor.visitBinaryExpr(this);
+        }
     }
 
     static class Grouping extends Expr {
@@ -21,6 +33,11 @@ abstract class Expr {
         Grouping(Expr expression) {
             this.expression = expression;
         }
+
+        @Override
+        <RetType> RetType accept(Visitor<RetType> visitor) {
+            return visitor.visitGroupingExpr(this);
+        }
     }
 
     static class Literal extends Expr {
@@ -28,6 +45,11 @@ abstract class Expr {
 
         Literal(Object value) {
             this.value = value;
+        }
+
+        @Override
+        <RetType> RetType accept(Visitor<RetType> visitor) {
+            return visitor.visitLiteralExpr(this);
         }
     }
 
@@ -39,6 +61,12 @@ abstract class Expr {
             this.operator = operator;
             this.right = right;
         }
-    }
-}
 
+        @Override
+        <RetType> RetType accept(Visitor<RetType> visitor) {
+            return visitor.visitUnaryExpr(this);
+        }
+    }
+
+    abstract <RetType> RetType accept(Visitor<RetType> visitor);
+}

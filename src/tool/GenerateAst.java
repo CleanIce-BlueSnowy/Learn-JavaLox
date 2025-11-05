@@ -27,18 +27,33 @@ public class GenerateAst {
             writer.println();
             writer.println("import java.util.List;");
             writer.println();
-            writer.print(String.format("abstract class %s {", baseName));
+            writer.println(String.format("abstract class %s {", baseName));
+
+            defineVisitor(writer, baseName, types);
+            writer.println();
 
             for (String type : types) {
                 String className = type.split(":")[0].trim();
                 String fields = type.split(":")[1].trim();
-                writer.println();
                 defineType(writer, baseName, className, fields);
+                writer.println();
             }
 
+            writer.println("    abstract <RetType> RetType accept(Visitor<RetType> visitor);");
+
             writer.println("}");
-            writer.println();
         }
+    }
+
+    private static void defineVisitor(PrintWriter writer, String baseName, List<String> types) {
+        writer.println("    interface Visitor<RetType> {");
+
+        for (String type : types) {
+            String typeName = type.split(":")[0].trim();
+            writer.println(String.format("        RetType visit%s%s(%s %s);", typeName, baseName, typeName, baseName.toLowerCase()));
+        }
+
+        writer.println("    }");
     }
 
     private static void defineType(PrintWriter writer, String baseName, String className, String fieldList) {
@@ -60,6 +75,13 @@ public class GenerateAst {
             String name = field.split(" ")[1];
             writer.println(String.format("            this.%s = %s;", name, name));
         }
+        writer.println("        }");
+
+        // Visitor pattern.
+        writer.println();
+        writer.println("        @Override");
+        writer.println("        <RetType> RetType accept(Visitor<RetType> visitor) {");
+        writer.println(String.format("            return visitor.visit%s%s(this);", className, baseName));
         writer.println("        }");
 
         writer.println("    }");
