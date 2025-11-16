@@ -11,22 +11,22 @@ class Scanner {
     private int current = 0;
     private int line = 1;
     private static final Map<String, TokenType> keywords = Map.ofEntries(
-        Map.entry("and", TokenType.AND),
-        Map.entry("class", TokenType.CLASS),
-        Map.entry("else", TokenType.ELSE),
-        Map.entry("false", TokenType.FALSE),
-        Map.entry("for", TokenType.FOR),
-        Map.entry("fun", TokenType.FUN),
-        Map.entry("if", TokenType.IF),
-        Map.entry("nil", TokenType.NIL),
-        Map.entry("or", TokenType.OR),
-        Map.entry("print", TokenType.PRINT),
-        Map.entry("return", TokenType.RETURN),
-        Map.entry("super", TokenType.SUPER),
-        Map.entry("this", TokenType.THIS),
-        Map.entry("true", TokenType.TRUE),
-        Map.entry("var", TokenType.VAR),
-        Map.entry("while", TokenType.WHILE)
+        Map.entry("and", TokenType.And),
+        Map.entry("class", TokenType.Class),
+        Map.entry("else", TokenType.Else),
+        Map.entry("false", TokenType.False),
+        Map.entry("for", TokenType.For),
+        Map.entry("fun", TokenType.Fun),
+        Map.entry("if", TokenType.If),
+        Map.entry("nil", TokenType.Nil),
+        Map.entry("or", TokenType.Or),
+        Map.entry("print", TokenType.Print),
+        Map.entry("return", TokenType.Return),
+        Map.entry("super", TokenType.Super),
+        Map.entry("this", TokenType.This),
+        Map.entry("true", TokenType.True),
+        Map.entry("var", TokenType.Var),
+        Map.entry("while", TokenType.While)
     );
 
     Scanner(String source) {
@@ -66,46 +66,46 @@ class Scanner {
         char ch = advance();
         switch (ch) {
             case '(' ->  {
-                addToken(TokenType.LEFT_PAREN);
+                addToken(TokenType.LeftParen);
             }
             case ')' ->  {
-                addToken(TokenType.RIGHT_PAREN);
+                addToken(TokenType.RightParen);
             }
             case '{' ->  {
-                addToken(TokenType.LEFT_BRACE);
+                addToken(TokenType.LeftBrace);
             }
             case '}' ->  {
-                addToken(TokenType.RIGHT_BRACE);
+                addToken(TokenType.RightBrace);
             }
             case ',' ->  {
-                addToken(TokenType.COMMA);
+                addToken(TokenType.Comma);
             }
             case '.' ->  {
-                addToken(TokenType.DOT);
+                addToken(TokenType.Dot);
             }
             case '-' ->  {
-                addToken(TokenType.MINUS);
+                addToken(TokenType.Minus);
             }
             case '+' ->  {
-                addToken(TokenType.PLUS);
+                addToken(TokenType.Plus);
             }
             case ';' ->  {
-                addToken(TokenType.SEMICOLON);
+                addToken(TokenType.Semicolon);
             }
             case '*' ->  {
-                addToken(TokenType.STAR);
+                addToken(TokenType.Star);
             }
             case '!' -> {
-                addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+                addToken(match('=') ? TokenType.BangEqual : TokenType.Bang);
             }
             case '=' -> {
-                addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
+                addToken(match('=') ? TokenType.EqualEqual : TokenType.Equal);
             }
             case '<' -> {
-                addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
+                addToken(match('=') ? TokenType.LessEqual : TokenType.Less);
             }
             case '>' -> {
-                addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
+                addToken(match('=') ? TokenType.GreaterEqual : TokenType.Greater);
             }
             case '/' -> {
                 if (match('/')) {
@@ -148,7 +148,7 @@ class Scanner {
                         next = peek();
                     }
                 } else {
-                    addToken(TokenType.SLASH);
+                    addToken(TokenType.Slash);
                 }
             }
             case ' ',  '\r',  '\t' -> {}
@@ -178,7 +178,7 @@ class Scanner {
         String text = source.substring(start, current);
         TokenType type = keywords.get(text);
         if (type == null) {
-            type = TokenType.IDENTIFIER;
+            type = TokenType.Identifier;
         }
         addToken(type);
     }
@@ -196,7 +196,7 @@ class Scanner {
             }
         }
 
-        addToken(TokenType.NUMBER, Double.valueOf(source.substring(start, current)));
+        addToken(TokenType.Number, Double.valueOf(source.substring(start, current)));
     }
 
     private void string() {
@@ -215,7 +215,7 @@ class Scanner {
         advance();
 
         String value = source.substring(start + 1, current - 1);
-        addToken(TokenType.STRING, value);
+        addToken(TokenType.String, value);
     }
 
     private boolean match(char expected) {
