@@ -1,5 +1,6 @@
 package lox;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class Parser {
@@ -12,16 +13,62 @@ class Parser {
         this.tokens = tokens;
     }
 
-    Expr parse() {
+    List<Stmt> parse() {
+        List<Stmt> statements = new ArrayList<>();
+        while (!isAtEnd()) {
+            statements.add(declaration());
+        }
+        return statements;
+    }
+
+    private Expr expression() {
+
+        return equality();
+    }
+
+    private Stmt declaration() {
         try {
-            return expression();
+            if (match(TokenType.Var)) {
+                return varDeclaration();
+            } else {
+                return statement();
+            }
         } catch (ParseError error) {
+            synchronize();
             return null;
         }
     }
 
-    private Expr expression() {
-        return equality();
+    private Stmt statement() {
+        if (match(TokenType.Print)) {
+            return printStatement();
+        } else {
+            return expressionStatement();
+        }
+    }
+
+    private Stmt printStatement() {
+        Expr value = expression();
+        consume(TokenType.Semicolon, "Expect `;` after value.");
+        return new Stmt.Print(value);
+    }
+
+    private Stmt varDeclaration() {
+        Token name = consume(TokenType.Identifier, "Expect variable name.");
+
+        Expr initializer = null;
+        if (match(TokenType.Equal)) {
+            initializer = expression();
+        }
+
+        consume(TokenType.Semicolon, "Expect `;` after variable declaration.");
+        return new Stmt.Var(name, initializer);
+    }
+
+    private Stmt expressionStatement() {
+        Expr expr = expression();
+        consume(TokenType.Semicolon, "Expect `;` after expression.");
+        return new Stmt.Expression(expr);
     }
 
     private Expr equality() {
@@ -91,6 +138,8 @@ class Parser {
             return new Expr.Literal(null);
         } else if (match(TokenType.Number, TokenType.String)) {
             return new Expr.Literal(previous().literal);
+        } else if (match(TokenType.Identifier)) {
+            return new Expr.Variable(previous());
         } else if (match(TokenType.LeftParen)) {
             Expr expr = expression();
             consume(TokenType.RightParen, "Expect `)` after expression.");

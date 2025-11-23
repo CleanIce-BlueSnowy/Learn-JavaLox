@@ -8,6 +8,7 @@ abstract class Expr {
         RetType visitGroupingExpr(Grouping expr);
         RetType visitLiteralExpr(Literal expr);
         RetType visitUnaryExpr(Unary expr);
+        RetType visitVariableExpr(Variable expr);
     }
 
     static class Binary extends Expr {
@@ -65,6 +66,19 @@ abstract class Expr {
         @Override
         <RetType> RetType accept(Visitor<RetType> visitor) {
             return visitor.visitUnaryExpr(this);
+        }
+    }
+
+    static class Variable extends Expr {
+        final Token name;
+
+        Variable(Token name) {
+            this.name = name;
+        }
+
+        @Override
+        <RetType> RetType accept(Visitor<RetType> visitor) {
+            return visitor.visitVariableExpr(this);
         }
     }
 
