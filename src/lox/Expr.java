@@ -8,6 +8,7 @@ abstract class Expr {
         RetType visitBinaryExpr(Binary expr);
         RetType visitGroupingExpr(Grouping expr);
         RetType visitLiteralExpr(Literal expr);
+        RetType visitLogicalExpr(Logical expr);
         RetType visitUnaryExpr(Unary expr);
         RetType visitVariableExpr(Variable expr);
     }
@@ -67,6 +68,23 @@ abstract class Expr {
         @Override
         <RetType> RetType accept(Visitor<RetType> visitor) {
             return visitor.visitLiteralExpr(this);
+        }
+    }
+
+    static class Logical extends Expr {
+        final Expr left;
+        final Token operator;
+        final Expr right;
+
+        Logical(Expr left, Token operator, Expr right) {
+            this.left = left;
+            this.operator = operator;
+            this.right = right;
+        }
+
+        @Override
+        <RetType> RetType accept(Visitor<RetType> visitor) {
+            return visitor.visitLogicalExpr(this);
         }
     }
 

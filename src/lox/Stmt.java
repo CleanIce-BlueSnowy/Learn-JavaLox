@@ -9,6 +9,7 @@ abstract class Stmt {
         RetType visitIfStmt(If stmt);
         RetType visitPrintStmt(Print stmt);
         RetType visitVarStmt(Var stmt);
+        RetType visitWhileStmt(While stmt);
     }
 
     static class Block extends Stmt {
@@ -79,6 +80,21 @@ abstract class Stmt {
         @Override
         <RetType> RetType accept(Visitor<RetType> visitor) {
             return visitor.visitVarStmt(this);
+        }
+    }
+
+    static class While extends Stmt {
+        final Expr condition;
+        final Stmt body;
+
+        While(Expr condition, Stmt body) {
+            this.condition = condition;
+            this.body = body;
+        }
+
+        @Override
+        <RetType> RetType accept(Visitor<RetType> visitor) {
+            return visitor.visitWhileStmt(this);
         }
     }
 
