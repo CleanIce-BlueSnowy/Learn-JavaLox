@@ -1,5 +1,7 @@
-var a = 1;
-{
-    var a = a + 2;
-    print a;
+var num = 1 + 2;
+
+if (num < 3) {
+    print "Yes!";
+} else {
+    print "No!";
 }

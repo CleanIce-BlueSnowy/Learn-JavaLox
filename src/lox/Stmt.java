@@ -6,6 +6,7 @@ abstract class Stmt {
     interface Visitor<RetType> {
         RetType visitBlockStmt(Block stmt);
         RetType visitExpressionStmt(Expression stmt);
+        RetType visitIfStmt(If stmt);
         RetType visitPrintStmt(Print stmt);
         RetType visitVarStmt(Var stmt);
     }
@@ -33,6 +34,23 @@ abstract class Stmt {
         @Override
         <RetType> RetType accept(Visitor<RetType> visitor) {
             return visitor.visitExpressionStmt(this);
+        }
+    }
+
+    static class If extends Stmt {
+        final Expr condition;
+        final Stmt thenBranch;
+        final Stmt elseBranch;
+
+        If(Expr condition, Stmt thenBranch, Stmt elseBranch) {
+            this.condition = condition;
+            this.thenBranch = thenBranch;
+            this.elseBranch = elseBranch;
+        }
+
+        @Override
+        <RetType> RetType accept(Visitor<RetType> visitor) {
+            return visitor.visitIfStmt(this);
         }
     }
 
