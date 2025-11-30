@@ -12,6 +12,7 @@ abstract class Expr {
         RetType visitLiteralExpr(Literal expr);
         RetType visitLogicalExpr(Logical expr);
         RetType visitSetExpr(Set expr);
+        RetType visitSuperExpr(Super expr);
         RetType visitThisExpr(This expr);
         RetType visitUnaryExpr(Unary expr);
         RetType visitVariableExpr(Variable expr);
@@ -138,6 +139,21 @@ abstract class Expr {
         @Override
         <RetType> RetType accept(Visitor<RetType> visitor) {
             return visitor.visitSetExpr(this);
+        }
+    }
+
+    static class Super extends Expr {
+        final Token keyword;
+        final Token method;
+
+        Super(Token keyword, Token method) {
+            this.keyword = keyword;
+            this.method = method;
+        }
+
+        @Override
+        <RetType> RetType accept(Visitor<RetType> visitor) {
+            return visitor.visitSuperExpr(this);
         }
     }
 
