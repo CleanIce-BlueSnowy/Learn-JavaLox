@@ -6,6 +6,7 @@ abstract class Expr {
     interface Visitor<RetType> {
         RetType visitAssignExpr(Assign expr);
         RetType visitBinaryExpr(Binary expr);
+        RetType visitCallExpr(Call expr);
         RetType visitGroupingExpr(Grouping expr);
         RetType visitLiteralExpr(Literal expr);
         RetType visitLogicalExpr(Logical expr);
@@ -42,6 +43,23 @@ abstract class Expr {
         @Override
         <RetType> RetType accept(Visitor<RetType> visitor) {
             return visitor.visitBinaryExpr(this);
+        }
+    }
+
+    static class Call extends Expr {
+        final Expr callee;
+        final Token paren;
+        final List<Expr> arguments;
+
+        Call(Expr callee, Token paren, List<Expr> arguments) {
+            this.callee = callee;
+            this.paren = paren;
+            this.arguments = arguments;
+        }
+
+        @Override
+        <RetType> RetType accept(Visitor<RetType> visitor) {
+            return visitor.visitCallExpr(this);
         }
     }
 

@@ -6,8 +6,10 @@ abstract class Stmt {
     interface Visitor<RetType> {
         RetType visitBlockStmt(Block stmt);
         RetType visitExpressionStmt(Expression stmt);
+        RetType visitFunctionStmt(Function stmt);
         RetType visitIfStmt(If stmt);
         RetType visitPrintStmt(Print stmt);
+        RetType visitReturnStmt(Return stmt);
         RetType visitVarStmt(Var stmt);
         RetType visitWhileStmt(While stmt);
     }
@@ -38,6 +40,23 @@ abstract class Stmt {
         }
     }
 
+    static class Function extends Stmt {
+        final Token name;
+        final List<Token> params;
+        final List<Stmt> body;
+
+        Function(Token name, List<Token> params, List<Stmt> body) {
+            this.name = name;
+            this.params = params;
+            this.body = body;
+        }
+
+        @Override
+        <RetType> RetType accept(Visitor<RetType> visitor) {
+            return visitor.visitFunctionStmt(this);
+        }
+    }
+
     static class If extends Stmt {
         final Expr condition;
         final Stmt thenBranch;
@@ -65,6 +84,21 @@ abstract class Stmt {
         @Override
         <RetType> RetType accept(Visitor<RetType> visitor) {
             return visitor.visitPrintStmt(this);
+        }
+    }
+
+    static class Return extends Stmt {
+        final Token keyword;
+        final Expr value;
+
+        Return(Token keyword, Expr value) {
+            this.keyword = keyword;
+            this.value = value;
+        }
+
+        @Override
+        <RetType> RetType accept(Visitor<RetType> visitor) {
+            return visitor.visitReturnStmt(this);
         }
     }
 
