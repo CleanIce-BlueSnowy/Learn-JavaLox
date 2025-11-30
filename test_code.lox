@@ -1,14 +1,7 @@
-fun make_counter() {
-    var i = 0;
-
-    fun count() {
-        i = i + 1;
-        return i;
+class Bacon {
+    eat() {
+        print "Crunch crunch crunch!";
     }
-
-    return count;
 }
 
-var counter = make_counter();
-print counter();
-print counter();
+Bacon().eat();

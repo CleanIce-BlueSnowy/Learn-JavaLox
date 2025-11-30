@@ -28,7 +28,9 @@ class Parser {
 
     private Stmt declaration() {
         try {
-            if (match(TokenType.Fun)) {
+            if (match(TokenType.Class)) {
+                return classDeclaration();
+            } else if (match(TokenType.Fun)) {
                 return function("function");
             } else if (match(TokenType.Var)) {
                 return varDeclaration();
@@ -39,6 +41,19 @@ class Parser {
             synchronize();
             return null;
         }
+    }
+
+    private Stmt classDeclaration() {
+        Token name = consume(TokenType.Identifier, "Expect class name.");
+        consume(TokenType.LeftBrace, "Expect `{` before class body.");
+
+        List<Stmt.Function> methods = new ArrayList<>();
+        while (!check(TokenType.RightBrace) && !isAtEnd()) {
+            methods.add(function("method"));
+        }
+
+        consume(TokenType.RightBrace, "Expect `}` after class body.");
+        return new Stmt.Class(name, methods);
     }
 
     private Stmt statement() {
@@ -211,6 +226,8 @@ class Parser {
             if (expr instanceof Expr.Variable variable) {
                 Token name = variable.name;
                 return new Expr.Assign(name, value);
+            } else if (expr instanceof Expr.Get get) {
+                return new Expr.Set(get.object, get.name, value);
             }
 
             try {
@@ -332,6 +349,9 @@ class Parser {
         while (true) {
             if (match(TokenType.LeftParen)) {
                 expr = finishCall(expr);
+            } else if (match(TokenType.Dot)) {
+                Token name = consume(TokenType.Identifier, "Expect property name after `.`.");
+                expr = new Expr.Get(expr, name);
             } else {
                 break;
             }
@@ -349,6 +369,8 @@ class Parser {
             return new Expr.Literal(null);
         } else if (match(TokenType.Number, TokenType.String)) {
             return new Expr.Literal(previous().literal);
+        } else if (match(TokenType.This)) {
+            return new Expr.This(previous());
         } else if (match(TokenType.Identifier)) {
             return new Expr.Variable(previous());
         } else if (match(TokenType.LeftParen)) {

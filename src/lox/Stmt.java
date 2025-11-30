@@ -5,6 +5,7 @@ import java.util.List;
 abstract class Stmt {
     interface Visitor<RetType> {
         RetType visitBlockStmt(Block stmt);
+        RetType visitClassStmt(Class stmt);
         RetType visitExpressionStmt(Expression stmt);
         RetType visitFunctionStmt(Function stmt);
         RetType visitIfStmt(If stmt);
@@ -24,6 +25,21 @@ abstract class Stmt {
         @Override
         <RetType> RetType accept(Visitor<RetType> visitor) {
             return visitor.visitBlockStmt(this);
+        }
+    }
+
+    static class Class extends Stmt {
+        final Token name;
+        final List<Stmt.Function> methods;
+
+        Class(Token name, List<Stmt.Function> methods) {
+            this.name = name;
+            this.methods = methods;
+        }
+
+        @Override
+        <RetType> RetType accept(Visitor<RetType> visitor) {
+            return visitor.visitClassStmt(this);
         }
     }
 
